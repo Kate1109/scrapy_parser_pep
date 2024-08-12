@@ -8,6 +8,7 @@
 import csv
 import datetime as dt
 from pathlib import Path
+from collections import Counter
 
 
 BASE_DIR = Path(__file__).parent.parent
@@ -16,16 +17,12 @@ BASE_DIR = Path(__file__).parent.parent
 class PepParsePipeline:
 
     def open_spider(self, spider):
-        self.results = {}
+        self.results = Counter()
         self.results_dir = BASE_DIR / 'results'
         self.results_dir.mkdir(exist_ok=True)
 
     def process_item(self, item, spider):
-        pep_status = item['status']
-        if self.results.get(pep_status):
-            self.results[pep_status] += 1
-        else:
-            self.results[pep_status] = 1
+        self.results[item['status']] += 1
         return item
 
     def close_spider(self, spider):
